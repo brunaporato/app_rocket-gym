@@ -12,16 +12,24 @@ import LogoSvg from '@assets/logo.svg'
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
 import { Platform } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 export function SignUp() {
+  const navigation = useNavigation()
+
+  function handleReturnScreen() {
+    navigation.goBack()
+  }
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
     >
-      <VStack flex={1} bgColor="$gray700" pb="$8">
+      <VStack flex={1} pb="$8">
         <Image
           source={BgImg}
+          defaultSource={BgImg}
           alt="People exercizing at gym with low opacity on background"
           resizeMode="cover"
           size="full"
@@ -59,7 +67,13 @@ export function SignUp() {
             />
             <Button title="Acessar" />
           </Center>
-          <Button title="Criar conta" variant="outline" mt="$20" />
+          <Center mt="$16">
+            <Button
+              title="Voltar para o login"
+              variant="outline"
+              onPress={handleReturnScreen}
+            />
+          </Center>
         </VStack>
       </VStack>
     </ScrollView>

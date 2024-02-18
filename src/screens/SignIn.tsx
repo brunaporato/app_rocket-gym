@@ -12,21 +12,26 @@ import LogoSvg from '@assets/logo.svg'
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
 import { Platform } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 export function SignIn() {
+  const navigation = useNavigation<AuthNavigatorRoutesProps>()
+
+  function handleNewAccount() {
+    navigation.navigate('signUp')
+  }
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
       scrollEnabled={Platform.OS !== 'ios'}
     >
-      <VStack
-        flex={1}
-        bgColor="$gray700"
-        pb={Platform.OS === 'ios' ? '$40' : '$16'}
-      >
+      <VStack flex={1} pb={Platform.OS === 'ios' ? '$40' : '$16'}>
         <Image
           source={BgImg}
+          defaultSource={BgImg}
           alt="People exercizing at gym with low opacity on background"
           resizeMode="cover"
           size="full"
@@ -62,7 +67,11 @@ export function SignIn() {
             <Text color="$gray100" fontSize="$sm" mb="$3" fontFamily="$body">
               Ainda não tem acesso?
             </Text>
-            <Button title="Criar conta" variant="outline" />
+            <Button
+              title="Criar conta"
+              variant="outline"
+              onPress={handleNewAccount}
+            />
           </Center>
         </VStack>
       </VStack>
