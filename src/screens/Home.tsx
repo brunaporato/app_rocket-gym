@@ -1,17 +1,21 @@
+import { ExerciseCard } from '@components/ExerciseCard'
 import { Filter } from '@components/Filter'
 import { HomeHeader } from '@components/HomeHeader'
-import { VStack } from '@gluestack-ui/themed'
+import { HStack, Heading, Text, VStack } from '@gluestack-ui/themed'
 import { useState } from 'react'
 import { FlatList } from 'react-native'
 
 export function Home() {
   const [filterSelected, setFilterSelected] = useState<string>('ombro')
-  const [filters, setFilters] = useState<string[]>([
-    'costas',
-    'ombro',
-    'biceps',
-    'triceps',
-  ])
+  const filters = ['costas', 'ombro', 'biceps', 'triceps']
+  const exercises = [
+    'Puxada frontal',
+    'Remada curvada',
+    'Remada unilateral',
+    'Levantamento terra',
+    'Remada reta',
+    'Levantamento lateral',
+  ]
 
   return (
     <VStack flex={1}>
@@ -33,6 +37,24 @@ export function Home() {
         }}
         style={{ marginVertical: 40, maxHeight: 40 }}
       />
+
+      <VStack flex={1} px="$8">
+        <HStack justifyContent="space-between" mb="$5" alignItems="center">
+          <Heading color="$gray200" fontSize="$md">
+            Exercícios
+          </Heading>
+          <Text color="$gray200" fontSize="$sm">
+            {exercises.length}
+          </Text>
+        </HStack>
+        <FlatList
+          data={exercises}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => <ExerciseCard title={item} />}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        />
+      </VStack>
     </VStack>
   )
 }
