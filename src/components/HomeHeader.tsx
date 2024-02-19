@@ -13,10 +13,10 @@ export function HomeHeader() {
         mr={16}
       />
       <VStack flex={1}>
-        <Text color="$gray100" fontSize="$md">
+        <Text color="$gray100" fontSize="$md" mb={0}>
           Olá,
         </Text>
-        <Heading color="$gray100" fontSize="$md">
+        <Heading color="$gray100" fontSize="$md" lineHeight={18}>
           Bruna
         </Heading>
       </VStack>
