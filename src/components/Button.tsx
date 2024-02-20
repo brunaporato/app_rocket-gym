@@ -4,6 +4,7 @@ import { TouchableOpacityProps } from 'react-native'
 type ButtonProps = TouchableOpacityProps & {
   title?: string
   variant?: 'solid' | 'outline'
+  mt?: '$4'
 }
 
 export function Button({ title, variant, ...props }: ButtonProps) {

@@ -2,7 +2,7 @@ import { Image } from '@gluestack-ui/themed'
 import { ImageProps } from 'react-native'
 
 type UserImageProps = ImageProps & {
-  size: number
+  size: number | string
   mr?: number
 }
 

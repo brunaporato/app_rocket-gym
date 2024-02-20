@@ -30,6 +30,7 @@ export function History() {
           </Text>
         )}
         style={{ paddingHorizontal: 32 }}
+        showsVerticalScrollIndicator={false}
       />
     </VStack>
   )

@@ -5,8 +5,18 @@ interface InputProps {
   placeholder: string
   type: 'text' | 'password'
   kbType?: KeyboardTypeOptions
+  bgColor?: string
+  value?: string
+  isDisabled?: boolean
 }
-export function Input({ placeholder, type, kbType }: InputProps) {
+
+export function Input({
+  placeholder,
+  type,
+  kbType,
+  value,
+  ...props
+}: InputProps) {
   return (
     <GlueStackInput
       bgColor="$gray700"
@@ -16,10 +26,14 @@ export function Input({ placeholder, type, kbType }: InputProps) {
       mb="$4"
       $focus-borderColor="$green500"
       $focus-borderWidth={1}
+      $disabled-bgColor="$gray600"
+      $disabled-opacity={1}
+      {...props}
     >
       <InputField
         placeholder={placeholder}
         placeholderTextColor="$gray300"
+        $disabled-opacity={0.2}
         fontSize="$md"
         fontFamily="$body"
         color="$white"
@@ -27,6 +41,7 @@ export function Input({ placeholder, type, kbType }: InputProps) {
         returnKeyType="next"
         keyboardType={kbType}
         autoCapitalize={placeholder === 'E-mail' ? 'none' : undefined}
+        value={value}
       />
     </GlueStackInput>
   )
