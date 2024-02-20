@@ -6,8 +6,8 @@ import { useState } from 'react'
 import { FlatList } from 'react-native'
 
 export function Home() {
-  const [filterSelected, setFilterSelected] = useState<string>('ombro')
   const filters = ['costas', 'ombro', 'biceps', 'triceps']
+  const [filterSelected, setFilterSelected] = useState<string>(filters[0])
   const exercises = [
     'Puxada frontal',
     'Remada curvada',
@@ -26,7 +26,7 @@ export function Home() {
         renderItem={({ item }) => (
           <Filter
             name={item}
-            isActive={filterSelected === item}
+            isActive={filterSelected.toUpperCase() === item.toUpperCase()}
             onPress={() => setFilterSelected(item)}
           />
         )}
