@@ -2,6 +2,8 @@ import { ExerciseCard } from '@components/ExerciseCard'
 import { Filter } from '@components/Filter'
 import { HomeHeader } from '@components/HomeHeader'
 import { HStack, Heading, Text, VStack } from '@gluestack-ui/themed'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { useState } from 'react'
 import { FlatList } from 'react-native'
 
@@ -16,6 +18,12 @@ export function Home() {
     'Remada reta',
     'Levantamento lateral',
   ]
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  function handleOpenExerciseDetails() {
+    navigation.navigate('exercise')
+  }
 
   return (
     <VStack flex={1}>
@@ -50,7 +58,9 @@ export function Home() {
         <FlatList
           data={exercises}
           keyExtractor={(item) => item}
-          renderItem={({ item }) => <ExerciseCard title={item} />}
+          renderItem={({ item }) => (
+            <ExerciseCard title={item} onPress={handleOpenExerciseDetails} />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 40 }}
         />
