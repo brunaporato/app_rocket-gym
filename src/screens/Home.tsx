@@ -43,7 +43,7 @@ export function Home() {
         contentContainerStyle={{
           paddingHorizontal: 32,
         }}
-        style={{ marginVertical: 40, maxHeight: 40 }}
+        style={{ marginVertical: 40, maxHeight: 40, minHeight: 40 }}
       />
 
       <VStack flex={1} px="$8">
