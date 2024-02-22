@@ -9,7 +9,7 @@ export function Routes() {
   theme.colors.background = colors.gray700
   return (
     <NavigationContainer>
-      <AppRoutes />
+      <AuthRoutes />
     </NavigationContainer>
   )
 }
