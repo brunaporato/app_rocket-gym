@@ -75,7 +75,7 @@ export function SignUp() {
         />
 
         <VStack px="$10" mt="$4" pb={Platform.OS === 'ios' ? '$40' : 0}>
-          <Center my="$24">
+          <Center mt="$24" mb="$16">
             <LogoSvg />
             <Text color="$gray100" fontSize="$sm">
               Treine sua mente e seu corpo
