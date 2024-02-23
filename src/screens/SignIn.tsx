@@ -15,11 +15,38 @@ import { Platform } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, useForm } from 'react-hook-form'
+
+interface SignInFormDataProps {
+  email: string
+  password: string
+}
+
+const signInSchema = yup.object({
+  email: yup
+    .string()
+    .required('Informe seu email')
+    .email('Informe um email válido'),
+  password: yup.string().required('Informe sua senha'),
+})
+
 export function SignIn() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormDataProps>({ resolver: yupResolver(signInSchema) })
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
   function handleNewAccount() {
     navigation.navigate('signUp')
+  }
+
+  function handleSignIn(data: SignInFormDataProps) {
+    console.log(data)
   }
 
   return (
@@ -59,9 +86,36 @@ export function SignIn() {
               Acesse sua conta
             </Heading>
 
-            <Input placeholder="E-mail" type="text" kbType="email-address" />
-            <Input placeholder="Senha" type="password" kbType="default" />
-            <Button title="Acessar" />
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="E-mail"
+                  type="text"
+                  kbType="email-address"
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={errors.email?.message}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Senha"
+                  type="password"
+                  kbType="default"
+                  onChangeText={onChange}
+                  value={value}
+                  errorMessage={errors.password?.message}
+                />
+              )}
+            />
+            <Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
           </Center>
           <Center mt="$24">
             <Text color="$gray100" fontSize="$sm" mb="$3" fontFamily="$body">
