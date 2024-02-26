@@ -5,6 +5,10 @@ import {
   Center,
   Heading,
   ScrollView,
+  useToast,
+  Toast,
+  ToastTitle,
+  ToastDescription,
 } from '@gluestack-ui/themed'
 
 import BgImg from '@assets/background.png'
@@ -16,6 +20,8 @@ import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 
 interface FormDataProps {
   name: string
@@ -48,12 +54,48 @@ export function SignUp() {
 
   const navigation = useNavigation()
 
+  const toast = useToast()
+
   function handleReturnScreen() {
     navigation.goBack()
   }
 
-  function handleSignUp(data: FormDataProps) {
-    console.log(data)
+  async function handleSignUp({ name, email, password }: FormDataProps) {
+    try {
+      const response = await api.post('/users', { name, email, password })
+      console.log(response.data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível criar a conta. Tente novamente mais tarde.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="attention"
+              mt={Platform.OS === 'android' ? 50 : 0}
+              borderWidth={0}
+              bgColor="$red500"
+              minWidth={250}
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$heading">
+                  Erro
+                </ToastTitle>
+                <ToastDescription color="$white" fontFamily="$body">
+                  {title}
+                </ToastDescription>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+    }
   }
 
   return (
