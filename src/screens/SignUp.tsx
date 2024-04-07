@@ -77,7 +77,7 @@ export function SignUp() {
           return (
             <Toast
               nativeID={toastId}
-              action="attention"
+              action="error"
               mt={Platform.OS === 'android' ? 50 : 0}
               borderWidth={0}
               bgColor="$red500"
@@ -95,6 +95,8 @@ export function SignUp() {
           )
         },
       })
+
+      !isAppError && console.log(error)
     }
   }
 

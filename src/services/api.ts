@@ -2,7 +2,7 @@ import { AppError } from '@utils/AppError'
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.27:3333',
+  baseURL: 'http://192.168.0.24:3333',
 })
 
 api.interceptors.response.use(
@@ -11,7 +11,7 @@ api.interceptors.response.use(
     if (error.response && error.response.data) {
       return Promise.reject(new AppError(error.response.data.message))
     } else {
-      return Promise.reject(new AppError(error.response.data))
+      return Promise.reject(error)
     }
   },
 )
