@@ -18,6 +18,7 @@ import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
+import { useAuth } from '@hooks/useAuth'
 
 interface SignInFormDataProps {
   email: string
@@ -41,12 +42,14 @@ export function SignIn() {
 
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
+  const { signIn } = useAuth()
+
   function handleNewAccount() {
     navigation.navigate('signUp')
   }
 
-  function handleSignIn(data: SignInFormDataProps) {
-    console.log(data)
+  function handleSignIn({ email, password }: SignInFormDataProps) {
+    signIn(email, password)
   }
 
   return (
