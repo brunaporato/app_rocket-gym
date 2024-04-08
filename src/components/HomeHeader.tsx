@@ -3,12 +3,17 @@ import { MaterialIcons } from '@expo/vector-icons'
 
 import { UserImage } from './UserImage'
 import { TouchableOpacity } from 'react-native'
+import { useAuth } from '@hooks/useAuth'
+
+import defaultUserPhoto from '@assets/userPhotoDefault.png'
 
 export function HomeHeader() {
+  const { user } = useAuth()
+
   return (
     <HStack bgColor="$gray600" pt="$16" pb="$5" px="$8" alignItems="center">
       <UserImage
-        source={{ uri: 'https://github.com/brunaporato.png' }}
+        source={user.avatar ? { uri: user.avatar } : defaultUserPhoto}
         size={64}
         mr={16}
       />
@@ -17,7 +22,7 @@ export function HomeHeader() {
           Olá,
         </Text>
         <Heading color="$gray100" fontSize="$md" lineHeight={18}>
-          Bruna
+          {user.name}
         </Heading>
       </VStack>
       <TouchableOpacity>
