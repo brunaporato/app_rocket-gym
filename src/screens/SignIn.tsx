@@ -48,8 +48,8 @@ export function SignIn() {
     navigation.navigate('signUp')
   }
 
-  function handleSignIn({ email, password }: SignInFormDataProps) {
-    signIn(email, password)
+  async function handleSignIn({ email, password }: SignInFormDataProps) {
+    await signIn(email, password)
   }
 
   return (
