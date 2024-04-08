@@ -9,13 +9,11 @@ export function Routes() {
 
   const { user } = useAuth()
 
-  console.log(user)
-
   const theme = DefaultTheme
   theme.colors.background = colors.gray700
   return (
     <NavigationContainer>
-      <AuthRoutes />
+      {user.id ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   )
 }
