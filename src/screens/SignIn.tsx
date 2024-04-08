@@ -5,6 +5,10 @@ import {
   Center,
   Heading,
   ScrollView,
+  useToast,
+  Toast,
+  ToastTitle,
+  ToastDescription,
 } from '@gluestack-ui/themed'
 
 import BgImg from '@assets/background.png'
@@ -19,6 +23,8 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
+import { useState } from 'react'
 
 interface SignInFormDataProps {
   email: string
@@ -34,6 +40,7 @@ const signInSchema = yup.object({
 })
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false)
   const {
     control,
     handleSubmit,
@@ -43,13 +50,50 @@ export function SignIn() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
   const { signIn } = useAuth()
+  const toast = useToast()
 
   function handleNewAccount() {
     navigation.navigate('signUp')
   }
 
   async function handleSignIn({ email, password }: SignInFormDataProps) {
-    await signIn(email, password)
+    try {
+      setIsLoading(true)
+      await signIn(email, password)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível logar. Tente novamente mais tarde.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="error"
+              mt={Platform.OS === 'android' ? 50 : 0}
+              borderWidth={0}
+              bgColor="$red500"
+              minWidth="80%"
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$body">
+                  Erro
+                </ToastTitle>
+                <ToastDescription color="$white" fontFamily="$body">
+                  {title}
+                </ToastDescription>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -118,7 +162,11 @@ export function SignIn() {
                 />
               )}
             />
-            <Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
+            <Button
+              title="Acessar"
+              onPress={handleSubmit(handleSignIn)}
+              isLoading={isLoading}
+            />
           </Center>
           <Center mt="$24">
             <Text color="$gray100" fontSize="$sm" mb="$3" fontFamily="$body">

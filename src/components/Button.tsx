@@ -1,13 +1,23 @@
-import { ButtonText, Button as GlueStackButton } from '@gluestack-ui/themed'
+import {
+  ButtonText,
+  Button as GlueStackButton,
+  Spinner,
+} from '@gluestack-ui/themed'
 import { TouchableOpacityProps } from 'react-native'
 
 type ButtonProps = TouchableOpacityProps & {
   title?: string
   variant?: 'solid' | 'outline'
   mt?: '$4'
+  isLoading?: boolean
 }
 
-export function Button({ title, variant, ...props }: ButtonProps) {
+export function Button({
+  title,
+  variant,
+  isLoading = false,
+  ...props
+}: ButtonProps) {
   return (
     <GlueStackButton
       w="$full"
@@ -18,6 +28,7 @@ export function Button({ title, variant, ...props }: ButtonProps) {
       variant={variant}
       borderWidth={variant === 'outline' ? 1 : 0}
       borderColor="$green500"
+      isDisabled={isLoading}
       {...props}
     >
       <ButtonText
@@ -25,7 +36,7 @@ export function Button({ title, variant, ...props }: ButtonProps) {
         fontFamily="$heading"
         fontSize="$sm"
       >
-        {title}
+        {isLoading ? <Spinner color="$white" /> : title}
       </ButtonText>
     </GlueStackButton>
   )

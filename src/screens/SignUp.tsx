@@ -22,6 +22,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
+import { useState } from 'react'
 
 interface FormDataProps {
   name: string
@@ -44,6 +45,7 @@ const signUpSchema = yup.object({
 })
 
 export function SignUp() {
+  const [isLoading, setIsLoading] = useState(false)
   const {
     control,
     handleSubmit,
@@ -62,6 +64,7 @@ export function SignUp() {
 
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
+      setIsLoading(true)
       const response = await api.post('/users', { name, email, password })
       console.log(response.data)
     } catch (error) {
@@ -97,6 +100,9 @@ export function SignUp() {
       })
 
       !isAppError && console.log(error)
+      setIsLoading(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -200,6 +206,7 @@ export function SignUp() {
             <Button
               title="Criar e acessar"
               onPress={handleSubmit(handleSignUp)}
+              isLoading={isLoading}
             />
           </Center>
           <Center mt="$16">
