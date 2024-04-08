@@ -8,7 +8,7 @@ import { useAuth } from '@hooks/useAuth'
 import defaultUserPhoto from '@assets/userPhotoDefault.png'
 
 export function HomeHeader() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   return (
     <HStack bgColor="$gray600" pt="$16" pb="$5" px="$8" alignItems="center">
@@ -25,7 +25,7 @@ export function HomeHeader() {
           {user.name}
         </Heading>
       </VStack>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={signOut}>
         <Icon as={MaterialIcons} color="$gray200" size="xl" name="logout" />
       </TouchableOpacity>
     </HStack>
