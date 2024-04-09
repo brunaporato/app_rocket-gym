@@ -41,7 +41,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     try {
       setIsLoadingUserStorageData(true)
 
-      await storageUserSave(user)
+      await storageUserSave(userData)
       await storageAuthTokenSave(token)
     } catch (error) {
       throw error

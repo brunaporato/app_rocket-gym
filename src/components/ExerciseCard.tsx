@@ -8,12 +8,14 @@ import {
 } from '@gluestack-ui/themed'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
+import { ExerciseDTO } from '@dtos/ExerciseDTO'
+import { api } from '@services/api'
 
 interface ExerciseCardProps extends TouchableOpacityProps {
-  title: string
+  data: ExerciseDTO
 }
 
-export function ExerciseCard({ title, ...props }: ExerciseCardProps) {
+export function ExerciseCard({ data, ...props }: ExerciseCardProps) {
   return (
     <TouchableOpacity {...props}>
       <HStack
@@ -26,7 +28,7 @@ export function ExerciseCard({ title, ...props }: ExerciseCardProps) {
       >
         <Image
           source={{
-            uri: 'https://www.origym.com.br/midia/remada-unilateral-3.jpg',
+            uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`,
           }}
           alt="Exercise's example image"
           w="$16"
@@ -37,10 +39,10 @@ export function ExerciseCard({ title, ...props }: ExerciseCardProps) {
         />
         <VStack flex={1}>
           <Heading fontSize="$lg" color="$white">
-            {title}
+            {data.name}
           </Heading>
           <Text fontSize="$sm" color="$gray200" numberOfLines={2}>
-            3 séries x 12 repetições
+            {data.series} séries x {data.repetitions} repetições
           </Text>
         </VStack>
         <Icon as={Entypo} name="chevron-thin-right" color="$gray300" />
