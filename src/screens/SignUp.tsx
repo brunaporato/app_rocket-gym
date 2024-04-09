@@ -23,6 +23,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
 import { useState } from 'react'
+import { useAuth } from '@hooks/useAuth'
 
 interface FormDataProps {
   name: string
@@ -57,6 +58,7 @@ export function SignUp() {
   const navigation = useNavigation()
 
   const toast = useToast()
+  const { signIn } = useAuth()
 
   function handleReturnScreen() {
     navigation.goBack()
@@ -65,8 +67,9 @@ export function SignUp() {
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
       setIsLoading(true)
-      const response = await api.post('/users', { name, email, password })
-      console.log(response.data)
+
+      await api.post('/users', { name, email, password })
+      await signIn(email, password)
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError
@@ -100,8 +103,6 @@ export function SignUp() {
       })
 
       !isAppError && console.log(error)
-      setIsLoading(false)
-    } finally {
       setIsLoading(false)
     }
   }
