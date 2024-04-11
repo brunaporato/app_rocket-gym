@@ -92,7 +92,7 @@ export function Exercise() {
     try {
       setSubmittingRegister(true)
 
-      api.post('/history', { exercise_id: exerciseId })
+      await api.post('/history', { exercise_id: exerciseId })
 
       toast.show({
         placement: 'top',
