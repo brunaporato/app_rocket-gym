@@ -33,6 +33,7 @@ type RouteParamsProps = {
 
 export function Exercise() {
   const [isLoading, setIsLoading] = useState(true)
+  const [submittingRegister, setSubmittingRegister] = useState(false)
   const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO)
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -84,6 +85,75 @@ export function Exercise() {
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function handleExerciseHistoryRegister() {
+    try {
+      setSubmittingRegister(true)
+
+      api.post('/history', { exercise_id: exerciseId })
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="success"
+              mt={Platform.OS === 'android' ? 50 : 0}
+              borderWidth={0}
+              bgColor="$green700"
+              minWidth="80%"
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$body">
+                  Parabéns!
+                </ToastTitle>
+                <ToastDescription color="$white" fontFamily="$body">
+                  Exercício registrado no seu histórico.
+                </ToastDescription>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+
+      navigation.navigate('history')
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível registrar o exercício. Tente novamente mais tarde.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="error"
+              mt={Platform.OS === 'android' ? 50 : 0}
+              borderWidth={0}
+              bgColor="$red500"
+              minWidth="80%"
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$body">
+                  Erro
+                </ToastTitle>
+                <ToastDescription color="$white" fontFamily="$body">
+                  {title}
+                </ToastDescription>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+    } finally {
+      setSubmittingRegister(false)
     }
   }
 
@@ -152,7 +222,11 @@ export function Exercise() {
                   </Text>
                 </HStack>
               </HStack>
-              <Button title="Marcar como realizado" />
+              <Button
+                title="Marcar como realizado"
+                isLoading={submittingRegister}
+                onPress={handleExerciseHistoryRegister}
+              />
             </Box>
           </VStack>
         </ScrollView>
