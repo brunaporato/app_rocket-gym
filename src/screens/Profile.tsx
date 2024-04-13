@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { Platform, TouchableOpacity } from 'react-native'
 import {
   Center,
   ScrollView,
@@ -25,6 +25,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { useAuth } from '@hooks/useAuth'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 
 type FormDataProps = {
   name: string
@@ -34,19 +36,20 @@ type FormDataProps = {
   confirm_password: string
 }
 
-const profileSchema = yup.object({
-  name: yup.string().required('Informe seu nome'),
+const profileSchema = yup.object<FormDataProps>({
+  name: yup.string().required('Informe o nome'),
   password: yup
     .string()
-    .min(6, 'A senha deve ter pelo menos 6 dígitos')
+    .min(6, 'A senha deve ter pelo menos 6 dígitos.')
     .nullable()
     .transform((value) => value || null),
   confirm_password: yup
     .string()
     .nullable()
     .transform((value) => value || null)
-    .oneOf([yup.ref('password'), ''], 'A confirmação de senha não confere')
+    .oneOf([yup.ref('password'), null], 'A confirmação de senha não confere.')
     .when('password', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       is: (Field: any) => Field,
       then: (schema) =>
         schema
@@ -57,11 +60,12 @@ const profileSchema = yup.object({
 })
 
 export function Profile() {
+  const [isUpdating, setIsUpdating] = useState(false)
   const [userImage, setUserImage] = useState(
     'https://github.com/brunaporato.png',
   )
   const [imageIsLoading, setImageIsLoading] = useState(false)
-  const { user } = useAuth()
+  const { user, updateUserProfile } = useAuth()
 
   const toast = useToast()
   const {
@@ -73,7 +77,8 @@ export function Profile() {
       name: user.name,
       email: user.email,
     },
-    resolver: yupResolver(profileSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: yupResolver<any>(profileSchema),
   })
 
   async function handleSelectUserImage() {
@@ -133,7 +138,72 @@ export function Profile() {
   }
 
   async function handleProfileUpdate(data: FormDataProps) {
-    console.log(data)
+    try {
+      setIsUpdating(true)
+
+      const userUpdated = user
+      userUpdated.name = data.name
+
+      await api.put('/users', data)
+
+      await updateUserProfile(userUpdated)
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="success"
+              variant="outline"
+              borderWidth={0}
+              bgColor="$green700"
+              mt={Platform.OS === 'android' ? 50 : 0}
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$heading">
+                  Perfil atualizado com sucesso!
+                </ToastTitle>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível atualizar os dados. Tente novamente mais tarde.'
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => {
+          const toastId = 'toast-' + id
+          return (
+            <Toast
+              nativeID={toastId}
+              action="error"
+              mt={100}
+              variant="outline"
+              borderWidth={0}
+              bgColor="$red500"
+            >
+              <VStack space="xs">
+                <ToastTitle color="$white" fontFamily="$heading">
+                  Erro
+                </ToastTitle>
+                <ToastDescription color="$white" fontFamily="$body">
+                  {title}
+                </ToastDescription>
+              </VStack>
+            </Toast>
+          )
+        },
+      })
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   return (
@@ -258,6 +328,7 @@ export function Profile() {
             title="Atualizar"
             mt="$4"
             onPress={handleSubmit(handleProfileUpdate)}
+            isLoading={isUpdating}
           />
         </Center>
       </ScrollView>
