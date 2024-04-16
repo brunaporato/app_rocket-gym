@@ -27,6 +27,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
+import defaultUserPhoto from '@assets/userPhotoDefault.png'
 
 type FormDataProps = {
   name: string
@@ -61,9 +62,6 @@ const profileSchema = yup.object<FormDataProps>({
 
 export function Profile() {
   const [isUpdating, setIsUpdating] = useState(false)
-  const [userImage, setUserImage] = useState(
-    'https://github.com/brunaporato.png',
-  )
   const [imageIsLoading, setImageIsLoading] = useState(false)
   const { user, updateUserProfile } = useAuth()
 
@@ -128,7 +126,54 @@ export function Profile() {
           })
         }
 
-        setUserImage(selectedImage.assets[0].uri)
+        const fileExtension = selectedImage.assets[0].uri.split('.').pop()
+
+        const imageFile = {
+          name: `${user.name}.${fileExtension}`.toLowerCase().replace(' ', '-'),
+          uri: selectedImage.assets[0].uri,
+          type: `${selectedImage.assets[0].type}/${fileExtension}`,
+        } as never
+
+        const userImageUploadForm = new FormData()
+        userImageUploadForm.append('avatar', imageFile)
+
+        const avatarResponse = await api.patch(
+          '/users/avatar',
+          userImageUploadForm,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+
+        const updatedUser = user
+        updatedUser.avatar = avatarResponse.data.avatar
+
+        updateUserProfile(updatedUser)
+
+        toast.show({
+          placement: 'top',
+          render: ({ id }) => {
+            const toastId = 'toast-' + id
+            return (
+              <Toast
+                nativeID={toastId}
+                action="success"
+                variant="outline"
+                borderWidth={0}
+                bgColor="$green700"
+                mt={Platform.OS === 'android' ? 50 : 0}
+              >
+                <VStack space="xs">
+                  <ToastTitle color="$white" fontFamily="$heading">
+                    Foto atualizada com sucesso!
+                  </ToastTitle>
+                </VStack>
+              </Toast>
+            )
+          },
+        })
       }
     } catch (error) {
       console.log(error)
@@ -226,7 +271,11 @@ export function Profile() {
             </Center>
           ) : (
             <UserImage
-              source={{ uri: userImage }}
+              source={
+                user.avatar
+                  ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                  : defaultUserPhoto
+              }
               size="$33"
               style={{ position: 'relative' }}
             />
