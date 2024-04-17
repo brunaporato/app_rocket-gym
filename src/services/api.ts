@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
 import {
@@ -82,7 +83,6 @@ api.registerInterceptTokenManager = (signOut) => {
                 request.onSuccess(data.token)
               })
 
-              console.log('Token refreshed')
               resolve(api(originalRequestConfig))
             } catch (error: any) {
               failedQueue.forEach((request) => {
